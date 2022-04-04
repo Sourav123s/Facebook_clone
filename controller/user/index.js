@@ -12,7 +12,7 @@ async function chechkPassword(req, res) {
             }
         })
         let Password = user.Password
-        let chechkPassword = verfiPassword(rb.Password, Password);
+        let chechkPassword = await verfiPassword(rb.Password, Password);
 
         if (chechkPassword) {
             delete user.dataValues.Password;
@@ -68,12 +68,14 @@ async function addUser(req, res) {
         // upload the picture 
         let Profile_Pic = rb.Profile_pic
         let Cover_Pic = rb.Cover_Pic
-
+        let Password = await hashPassword(rb.Password);
+        let Dob = new Date(rb.Dob)
 
         let createUser = await User.create({
             First_Name: rb.First_Name,
             Last_Name: rb.Last_Name,
-            Dob: rb.Dob,
+            Dob: Dob,
+            Password: Password,
             Email: rb.Email,
             Phone_Number: rb.Phone_Number,
             Profile_pic: Profile_Pic,
@@ -91,7 +93,11 @@ async function addUser(req, res) {
     }
 }
 
-async function signIn(res, req) {
+async function signIn(req, res) {
+    //       return res.json({
+    //     message:'sucessfully hit the api ',
+    //     data:req.body
+    // })
     try {
 
         const rb = req.body;
@@ -108,7 +114,7 @@ async function signIn(res, req) {
             })
         }
         let Password = user.Password
-        let chechkPassword = verfiPassword(rb.Password, Password);
+        let chechkPassword = await verfiPassword(rb.Password, Password);
 
         if (chechkPassword) {
             delete user.dataValues.Password;
@@ -162,18 +168,19 @@ function verifyjwtToken(req, res, next) {
             return res.status(401).send('Unauthorize');
         }
     } catch (error) {
-
+        console.log(error);
     }
 }
 
 async function userProfile(req, res) {
     try {
-        const rb=req.user;
+        const rb = req.user;
 
-        const user = User.findOne({
-            where:{
-                id :rb.id
-            }
+        const user = await User.findOne({
+            where: {
+                id: rb.id
+            },
+            attribute: []
         })
 
         if (user) {
@@ -191,7 +198,7 @@ async function userProfile(req, res) {
         }
 
     } catch (error) {
-
+        console.log(error);
     }
 }
 module.exports = {
