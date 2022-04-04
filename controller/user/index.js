@@ -62,7 +62,7 @@ async function addUser(req, res) {
             res.json({
                 sucess: false,
                 data: check_user.Email,//this need to send by the user when it redirect to check password page
-                message: "User Already Exists",
+                message: "User Already Exists with this email",
             })
         }
         // upload the picture 
