@@ -20,9 +20,9 @@ async function addFriends(req, res) {
 
         if (friend) {
             return res.json({
-                success: false,
+                success: true,
                 message: 'you are now connected to this',
-                data:{user,friend}
+                data: { user, friend }
             })
         }
 
@@ -31,14 +31,35 @@ async function addFriends(req, res) {
     }
 }
 
-async function unFriend(req,res){
-    try{
+async function unFriend(req, res) {
+    try {
+        const { user_id } = req.body;
+        const { id } = req.user;
+        let timeStamp = new Date();
+        let user = await User.findOne({
+            where: {
+                id: user_id
+            }
+        })
+        let unFriend = await Friends.destroy({
+            Person_1: id,
+            Person_2: user_id,
+            
+        });
 
-    }catch(err){
-        
+        if (unFriend){
+            return res.json({
+                success:true,
+                message: 'unfriend',
+
+            })
+        }
+    } catch (err) {
+        console.log(err);
     }
 }
 
-module.exports={
-    addFriends
+module.exports = {
+    addFriends,
+    unFriend
 }
