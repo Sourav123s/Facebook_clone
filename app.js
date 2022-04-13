@@ -44,3 +44,9 @@ app.use('/api',require('./routes'))
 app.listen(port,()=>{
     console.log(`The App is running on port http://localhost:${port}`);
 })
+
+
+// leave_status: {
+//     type: Sequelize.ENUM('P', 'C', 'CN', 'R'),
+//         comment: 'P for Pending, C for complete,CN for cancel,R for running'
+// },
