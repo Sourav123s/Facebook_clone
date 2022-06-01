@@ -8,6 +8,29 @@ async function sendFriendRequest(req, res) {
         const rb = req.body;
         const { id } = req.user;
 
+
+        let check=await Friend_request.findOne({
+            where:{
+                request_send_by: id,
+                request_recived_by: rb.user_id,  
+            }
+        })
+
+        let checkTheyAreFriendOrNot =await Friends.findOne({
+            where:{
+                Person_1 :rb.user_id,
+                Person_2:id
+            }
+        })
+
+        if (check || checkTheyAreFriendOrNot){
+            return res.json({
+                success:false,
+                message:'You already send Friend Request or friends'
+            })
+        }
+
+
         let friendRequest = await Friend_request.create({
             request_send_by: id,
             request_recived_by: rb.user_id,
@@ -81,10 +104,12 @@ async function rejectFriendRequest(req, res) {
         const rb = req.body
 
         let rejectFriendRequest = await Friend_request.destroy({
-            where: { id: rb.request_id }
+            where: {
+                id: rb.request_id
+            }
         })
 
-        if(rejectFriendRequest){
+        if (rejectFriendRequest) {
             return res.json({
                 success: true,
                 message: 'Request reject',
